@@ -1,7 +1,5 @@
 # Paynow PHP SDK
-
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
-
+PHP SDK for the Paynow API
 # Prerequisites
 This library has a set of prerequisites that must be met for it to work
 1. PHP version 5.6 or higher
