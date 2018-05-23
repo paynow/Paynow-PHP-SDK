@@ -1,0 +1,35 @@
+{
+  "name": "paynowzw/php-sdk",
+  "description": "PHP SDK for the Paynow API",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Melvin Mupondori",
+      "email": "melvin@webdevworld.com"
+    },
+    {
+      "name": "Welington Maphosa",
+      "email": "welly@webdevworld.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Paynow\\": "src/"
+    },
+    "files": [
+      "src/helper.php"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests"
+    ]
+  },
+  "require": {
+    "php": "7.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.1"
+  }
+}
