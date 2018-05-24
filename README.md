@@ -1,5 +1,5 @@
 # Paynow PHP SDK
-PHP SDK for the Paynow API
+PHP SDK for Paynow Zimbabwe's API
 # Prerequisites
 This library has a set of prerequisites that must be met for it to work
 1. PHP version 5.6 or higher
