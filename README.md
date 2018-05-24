@@ -1,4 +1,4 @@
-# Paynow PHP SDK
+# Paynow Zimbabwe PHP SDK
 PHP SDK for Paynow Zimbabwe's API
 # Prerequisites
 This library has a set of prerequisites that must be met for it to work
