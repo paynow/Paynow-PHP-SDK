@@ -54,7 +54,7 @@ if($response->success()) {
     // Redirect the user to Paynow
     $response->redirect();
     
-    // Or if you prefer more control, get the link to redirect to the use it as you see fit 
+    // Or if you prefer more control, get the link to redirect the user to, then use it as you see fit 
     $link = $response->redirectLink();
 }
 ```
