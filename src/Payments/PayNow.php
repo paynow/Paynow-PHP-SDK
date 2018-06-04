@@ -5,6 +5,7 @@ use Paynow\Util\Hash;
 use Paynow\Http\Client;
 use Paynow\Core\Constants;
 use Paynow\Http\RequestInfo;
+use InvalidArgumentException;
 use Paynow\Core\InitResponse;
 use Paynow\Core\StatusResponse;
 
@@ -15,12 +16,12 @@ class Paynow
      * Merchant's return url
      * @var string
      */
-    protected $returnUrl = "http://localhost";
+    protected $returnUrl = null;
     /**
      * Merchant's result url
      * @var string
      */
-    protected $resultUrl = "http://localhost";
+    protected $resultUrl = null;
     /**
      * Client for making http requests
      * @var Client
@@ -62,31 +63,40 @@ class Paynow
 
     /**
      * @param string|null $ref Transaction reference
-     * @param string|array|null $item
+     * @param string|array|null $items
      * @param string|null $amount
      *
      * @return FluentBuilder
      */
-    public function createPayment( $ref = null, $item = null, $amount = null)
+    public function createPayment( $ref = null, $items = null, $amount = null)
     {
-        return new FluentBuilder($item, $ref, $amount);
+        return new FluentBuilder($items, $ref, $amount); // TODO: Remove amount argument. Users can now send payment by passing array to the send method
     }
 
     /**
      * Send a transaction to Paynow
      *
-     * @param FluentBuilder $builder
+     * @param FluentBuilder|array $builder
      *
      * @throws HashMismatchException
      * @throws \Paynow\Http\ConnectionException
      * @throws \Paynow\Payments\EmptyCartException
      * @throws \Paynow\Payments\EmptyTransactionReferenceException
      * @throws InvalidIntegrationException
+     * @throws InvalidUrlException
      *
      * @return InitResponse
      */
-    public function send(FluentBuilder $builder)
+    public function send($builder)
     {
+        if(is_null($this->returnUrl) || is_null($this->returnUrl)) {
+            throw new InvalidUrlException();
+        }
+
+        if(is_array($builder)) {
+            $builder = $this->createBuilder($builder);
+        }
+
         if (is_null($builder->ref)) {
             throw new EmptyTransactionReferenceException($builder);
         }
@@ -96,6 +106,23 @@ class Paynow
         }
 
         return $this->init($builder);
+    }
+
+    /**
+     * Create an instance of the fluent builder from the provided array of items
+     *
+     * @param array $items
+     * @return void
+     */
+    private function createBuilder($items)
+    {
+        if(!isset($items['reference'], $items['amount'])) {
+            throw new InvalidArgumentException("Payment array should have the following keys: reference, total");
+        }
+
+        $description = isset($items['description']) ? $items['description'] : "Payment";
+
+        return new FluentBuilder($description, $items['reference'], $items['amount']);
     }
 
     /**
