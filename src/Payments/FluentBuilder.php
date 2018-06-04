@@ -10,18 +10,63 @@ namespace Paynow\Payments;
  */
 class FluentBuilder
 {
+    /**
+     * Array containing the items in the cart
+     *
+     * @var array
+     */
     protected $_items = [];
 
+    /**
+     * Boolean value indicating whether the total should be recalculated
+     *
+     * @var boolean
+     */
     protected $_recalc = true;
 
+    /**
+     * Boolean value indicating whether the description of the cart should be regenerated
+     *
+     * @var boolean
+     */
     protected $_recache = true;
 
+    /**
+     * The reference of the transaction
+     *
+     * @var mixed
+     */
     protected $_ref;
 
+    /**
+     * The total of the items in the list
+     *
+     * @var float
+     */
     protected $_total;
 
-    protected $_description;
+    /**
+     * The description of the items in the list
+     *
+     * @var string
+     */
+    protected $_description = '';
+    
+    /**
+     * Boolean value indicating whether description should be generated 
+     * from the list of provided items
+     *
+     * @var boolean
+     */
+    protected $_override_description = true;
 
+    /**
+     * Default constructor
+     *
+     * @param mixed $item
+     * @param mixed $ref
+     * @param float|int $amount
+     */
     public function __construct($item = null, $ref = null, $amount = null)
     {
         $this->add($item, $amount);
@@ -31,6 +76,13 @@ class FluentBuilder
         }
     }
 
+    /**
+     * Add a new item to the list
+     *
+     * @param string|array $item
+     * @param float|int $amount
+     * @return void
+     */
     public function add($item, $amount = null)
     {
         if (is_array($item) && count($item) > 1) {
@@ -47,6 +99,8 @@ class FluentBuilder
     }
 
     /**
+     * Parse an array of items
+     * 
      * @param array $items
      */
     protected function parseItems(array $items)
@@ -65,9 +119,10 @@ class FluentBuilder
     }
 
     /**
-     * Push an item to the
-     * @param $item
-     * @param $amount
+     * Push an item to the list
+     * 
+     * @param string $item The name of the item
+     * @param float|int $amount The cost of the item
      */
     private function pushItem($item, $amount = null)
     {
@@ -119,20 +174,42 @@ class FluentBuilder
         return $total;
     }
 
+    public function setDescription($description)
+    {
+        $this->_description = $description;
+        $this->_override_description = false;
+    }
+
+    /**
+     * Get the description 
+     *
+     * @return void
+     */
     public function itemsDescription()
     {
         if(!$this->_recache) {
-            return $this->description;
+            return $this->_description;
         }
 
-        $this->description = '';
+        if($this->_override_description) {
+            return $this->_description;
+        }
+
+        $this->_description = '';
         for($i = 0; $i < count($this->_items); $i++) {
-            $this->description .= "{$this->_items[$i]['title']}, ";
+            $this->_description .= "{$this->_items[$i]['title']}, ";
         }
 
-        return $this->description;
+        return $this->_description;
     }
 
+    
+
+    /**
+     * Convert the builder to an array
+     *
+     * @return void
+     */
     public function toArray()
     {
         return [

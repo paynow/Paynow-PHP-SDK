@@ -122,7 +122,10 @@ class Paynow
 
         $description = isset($items['description']) ? $items['description'] : "Payment";
 
-        return new FluentBuilder($description, $items['reference'], $items['amount']);
+        $builder = new FluentBuilder($description, $items['reference'], $items['amount']);
+        $builder->setDescription($description);
+
+        return $builder;
     }
 
     /**
