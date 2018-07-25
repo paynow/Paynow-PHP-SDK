@@ -53,12 +53,14 @@ class Paynow
      * @param string $id Merchant's integration id
      * @param string $key Merchant's integration key
      */
-    public function __construct(Client $client, $id, $key)
+    public function __construct($id, $key, $returnUrl, $resultUrl)
     {
-        $this->client = $client;
+        $this->client = new Client();
 
         $this->integrationId = $id;
-        $this->integrationKey = $key;
+        $this->integrationKey = strtolower($key);
+        $this->returnUrl = $returnUrl;
+        $this->resultUrl = $resultUrl;
     }
 
     /**
@@ -68,9 +70,9 @@ class Paynow
      *
      * @return FluentBuilder
      */
-    public function createPayment( $ref = null, $items = null, $amount = null)
+    public function createPayment( $ref, $authEmail)
     {
-        return new FluentBuilder($items, $ref, $amount); // TODO: Remove amount argument. Users can now send payment by passing array to the send method
+        return new FluentBuilder($ref, $authEmail);
     }
 
     /**
@@ -141,22 +143,19 @@ class Paynow
      * @throws InvalidIntegrationException
      * @throws \Paynow\Http\ConnectionException
      */
-    public function sendMobile(FluentBuilder $builder, $phone)
+    public function sendMobile(FluentBuilder $builder, $phone, $method)
     {
         if (is_null($builder->ref)) {
             throw new EmptyTransactionReferenceException($builder);
         }
 
-        $number = [];
-        if (!preg_match('/07([7,8])((\1=7)[1-9]|[2-5])\d{6}/', $phone, $number)) {
-            throw new \InvalidArgumentException("Invalid mobile number entered");
-        }
+
 
         if ($builder->count == 0) {
             throw new EmptyCartException($builder);
         }
 
-        return $this->initMobile($builder, $number[0]);
+        return $this->initMobile($builder, $phone, $method);
     }
 
     /**
@@ -165,11 +164,11 @@ class Paynow
      * @param FluentBuilder $builder The transaction to be sent to Paynow
      *
      * @throws HashMismatchException
-     * @throws \Paynow\Http\ConnectionException
      * @throws InvalidIntegrationException
+     * @throws InvalidIntegrationException
+     * @throws \Paynow\Http\ConnectionException
      *
      * @return InitResponse The response from Paynow
-     * @throws InvalidIntegrationException
      */
     protected function init(FluentBuilder $builder)
     {
@@ -202,9 +201,9 @@ class Paynow
      *
      * @return InitResponse The response from Paynow
      */
-    protected function initMobile(FluentBuilder $builder, $phone, $method = 'ecocash')
+    protected function initMobile(FluentBuilder $builder, $phone, $method)
     {
-        if (!arr_contains($this->availableMobileMethods, 'ecocash')) {
+        if (!arr_contains($this->availableMobileMethods, $method)) {
             throw new NotImplementedException("The mobile money method {$method} is currently not supported for Paynow express checkout");
         }
 
@@ -266,12 +265,13 @@ class Paynow
         $items['id'] = $this->integrationId;
         $items['phone'] = $phone;
         $items['method'] = $method;
+        $items['authemail'] = $builder->auth_email;
 
-//        foreach ($items as $key => $item) {
-//            $items[$key] = urlencode($item);
-//        }
+        $items['hash'] = Hash::make($items, strtolower($this->integrationKey));
 
-        $items['hash'] = Hash::make($items, $this->integrationKey);
+       foreach ($items as $key => $item) {
+            $items[$key] = trim($item);
+        }
 
         return RequestInfo::create(Constants::URL_INITIATE_MOBILE_TRANSACTION, 'POST', $items);
     }

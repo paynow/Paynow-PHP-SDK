@@ -19,13 +19,20 @@ class InitResponse
      *
      * @var bool
      */
-    private $success;
+    public $success;
 
     /**
      * Boolean indicating whether the response contains a url to redirect to
      * @var bool
      */
-    private $has_redirect;
+    public $has_redirect;
+
+    /**
+     * The status of the transaction in Paynow
+     *
+     * @var string
+     */
+    public $status = '';
 
     /**
      * InitResponse constructor.
@@ -49,7 +56,8 @@ class InitResponse
     private function load()
     {
         if(arr_has($this->data,'status')) {
-            $this->success = strtolower($this->data['status']) === Constants::RESPONSE_OK;
+            $this->status = strtolower($this->data['status']);
+            $this->success = $this->status === Constants::RESPONSE_OK;
         }
 
         if(arr_has($this->data,'browserurl')) {
@@ -84,22 +92,6 @@ class InitResponse
     }
 
     /**
-     * Generates and prints out a pay button that the user can click and get redirected to Paynow
-     *
-     * @return void
-     */
-    public function paymentButton()
-    {
-        if(!$this->has_redirect) {
-            return;
-        }
-
-        $link = sprintf("<a style='text-decoration: none' class='paynow paynow-payment' href='%s'>%s</a>", $this->redirectLink(), Constants::PAYNOW_BUTTON);
-
-        print $link;
-    }
-
-    /**
      * Returns the url the user should be taken to so they can make a payment
      *
      * @return bool|string
@@ -112,6 +104,7 @@ class InitResponse
 
         return false;
     }
+
 
     /**
      * Redirect to the Paynow site for payment

@@ -7,6 +7,7 @@ namespace Paynow\Payments;
  * @property float|null total
  * @property int|null ref
  * @property int|null description
+ * @property string authEmail
  */
 class FluentBuilder
 {
@@ -61,19 +62,30 @@ class FluentBuilder
     protected $_override_description = true;
 
     /**
+     * The email address of the authenticated user 
+     *
+     * @var string
+     */
+    protected $_auth_email = '';
+
+    /**
      * Default constructor
      *
      * @param mixed $item
      * @param mixed $ref
      * @param float|int $amount
      */
-    public function __construct($item = null, $ref = null, $amount = null)
+    public function __construct($ref, $authEmail)
     {
-        $this->add($item, $amount);
-
+	
         if(!is_null($ref) && !empty($ref)) {
             $this->_ref = $ref;
         }
+
+        if(!is_null($authEmail) && !empty($authEmail)) {
+            $this->_auth_email = $authEmail;
+        }
+	
     }
 
     /**
@@ -154,6 +166,8 @@ class FluentBuilder
                 return ($this->_recache) ? $this->itemsDescription() : $this->_description;
             case 'ref':
                 return $this->_ref;
+            case 'auth_email':
+                return $this->_auth_email;
 
             default:
                 return null;

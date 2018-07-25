@@ -38,6 +38,7 @@ class RequestInfo
     {
         $this->url = $url;
         $this->method = $method;
+
         $this->data = http_build_query($data);
     }
 
