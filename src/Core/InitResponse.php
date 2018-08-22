@@ -21,11 +21,6 @@ class InitResponse
      */
     public $success;
 
-    /**
-     * Boolean indicating whether the response contains a url to redirect to
-     * @var bool
-     */
-    public $has_redirect;
 
     /**
      * The status of the transaction in Paynow
@@ -33,6 +28,7 @@ class InitResponse
      * @var string
      */
     public $status = '';
+
 
     /**
      * InitResponse constructor.
@@ -44,7 +40,6 @@ class InitResponse
     public function __construct(array $response)
     {
         $this->data = $response;
-
         $this->load();
     }
 
@@ -59,16 +54,17 @@ class InitResponse
             $this->status = strtolower($this->data['status']);
             $this->success = $this->status === Constants::RESPONSE_OK;
         }
-
-        if(arr_has($this->data,'browserurl')) {
-            $this->has_redirect = true;
-        }
-
+		
         if(!$this->success()) {
             if(arr_has($this->data, 'error')) {
                 $this->fail(strtolower($this->data['error']));
             }
         }
+    }
+
+    public function instructions() 
+    {
+        return arr_has($this->data, 'instructions') ? $this->data['instructions'] : '';
     }
 
 
@@ -96,24 +92,10 @@ class InitResponse
      *
      * @return bool|string
      */
-    public function redirectLink()
+    public function redirectUrl()
     {
-        if($this->has_redirect) {
+        if(arr_has($this->data,'browserurl')) {
             return $this->data['browserurl'];
-        }
-
-        return false;
-    }
-
-
-    /**
-     * Redirect to the Paynow site for payment
-     * @return bool
-     */
-    public function redirect()
-    {
-        if($this->has_redirect) {
-           return header("Location: {$this->data['browserurl']}");
         }
 
         return false;

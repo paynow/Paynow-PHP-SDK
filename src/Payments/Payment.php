@@ -9,7 +9,7 @@ namespace Paynow\Payments;
  * @property int|null description
  * @property string authEmail
  */
-class FluentBuilder
+class Payment
 {
     /**
      * Array containing the items in the cart
@@ -33,6 +33,13 @@ class FluentBuilder
     protected $_recache = true;
 
     /**
+     * The description of the transaction to use if the generated on has been overriden
+     *
+     * @var string
+     */
+    protected $_ov_description = null;
+
+    /**
      * The reference of the transaction
      *
      * @var mixed
@@ -52,13 +59,6 @@ class FluentBuilder
      * @var string
      */
     protected $_description = '';
-
-    /**
-     * The description to use when generated description is overriden
-     *
-     * @var string
-     */
-    protected $_ov_description = '';
     
     /**
      * Boolean value indicating whether description should be generated 
@@ -74,6 +74,28 @@ class FluentBuilder
      * @var string
      */
     protected $_auth_email = '';
+
+    /**
+     * Boolean value indicating whether transaction is mobile or not
+     *
+     * @var boolean
+     */
+    public $_is_mobile = false;
+
+    /**
+     * Phone number to use for transaction (for mobile transactions)
+     *
+     * @var string
+     */
+    protected $_phone = null;
+
+
+    /**
+     * Mobile money method to use for transaction
+     *
+     * @var string
+     */
+    protected $_method = null;
 	
 	/**
      * Default constructor
@@ -82,15 +104,45 @@ class FluentBuilder
      * @param mixed $ref
      * @param float|int $amount
      */
-    public function __construct($ref, $authEmail = '')
+    private function __construct($mobile, $ref, $authEmail = '', $phone, $method)
+    {   
+        $this->_is_mobile = $mobile;
+        $this->_ref = $ref;
+        $this->_auth_email = $authEmail;
+        $this->_phone = $phone;
+        $this->_method = $method;
+    }
+
+    /**
+     * Create an instance of the payment class (for mobile payments)
+     *
+     * @param string $ref
+     * @param string $authEmail
+     * @param string $phone The mobile phone making the payment
+     * @param string $method The mobile money method     
+     * 
+     * @return void
+     */
+    public static function createMobile($ref, $authEmail, $phone, $method) 
     {
-        if(!is_null($ref) && !empty($ref)) {
-            $this->_ref = $ref;
+        if (!isset($method)) {
+            throw new InvalidArgumentException("The mobile money method should be specified");
         }
 
-        if(!is_null($authEmail) && !empty($authEmail)) {
-            $this->_auth_email = $authEmail;
-        }
+        return new static(true, $ref, $authEmail, $phone, $method);
+    }
+
+    /**
+     * Create an instance of the payment class (for normal payments)
+     *
+     * @param string $ref
+     * @param string $authEmail
+     * 
+     * @return void
+     */
+    public static function create($ref, $authEmail = '') 
+    {
+        return new static(false, $ref, $authEmail);
     }
 
     /**
@@ -167,18 +219,41 @@ class FluentBuilder
 
             case 'count':
                 return count($this->_items);
+
             case 'description':
                 return ($this->_recache) ? $this->itemsDescription() : $this->_description;
+
             case 'ref':
                 return $this->_ref;
+
             case 'auth_email':
                 return $this->_auth_email;
+
+            case 'method':
+                return $this->_method;
+
+            case 'phone':
+                return $this->_phone;
+
+            case 'is_mobile':
+                return $this->_is_mobile;
+
+                
+            case 'authEmail':
+                return $this->_auth_email;
+
+
 
             default:
                 return null;
         }
     }
 
+    /**
+     * Calculate the total of the items in the 'cart'
+     *
+     * @return void
+     */
     public function computeTotal()
     {
         $total = 0;
@@ -193,6 +268,12 @@ class FluentBuilder
         return $total;
     }
 
+    /**
+     * Sets the description for the transaction
+     *
+     * @param string $description
+     * @return void
+     */
     public function setDescription($description)
     {
         $this->_ov_description = $description;
@@ -200,7 +281,7 @@ class FluentBuilder
     }
 		
     /**
-     * Get the description 
+     * Get the description for the items in the cart
      *
      * @return void
      */

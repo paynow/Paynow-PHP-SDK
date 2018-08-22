@@ -38,13 +38,6 @@ class Paynow
      */
     private $integrationKey = "";
 
-    /**
-     * The currently supported mobile money methods for express checkout
-     * @var array
-     */
-    private $availableMobileMethods = [
-        'ecocash'
-    ];
 
     /**
      * Default constructor.
@@ -70,7 +63,19 @@ class Paynow
      *
      * @return FluentBuilder
      */
-    public function createPayment( $ref, $authEmail)
+    public function createPayment($ref)
+    {
+        return new FluentBuilder($ref);
+    }
+
+    /**
+     * @param string|null $ref Transaction reference
+     * @param string|array|null $items
+     * @param string|null $amount
+     *
+     * @return FluentBuilder
+     */
+    public function createMobilePayment($ref, $authEmail)
     {
         return new FluentBuilder($ref, $authEmail);
     }
@@ -149,8 +154,6 @@ class Paynow
             throw new EmptyTransactionReferenceException($builder);
         }
 
-
-
         if ($builder->count == 0) {
             throw new EmptyCartException($builder);
         }
@@ -203,8 +206,8 @@ class Paynow
      */
     protected function initMobile(FluentBuilder $builder, $phone, $method)
     {
-        if (!arr_contains($this->availableMobileMethods, $method)) {
-            throw new NotImplementedException("The mobile money method {$method} is currently not supported for Paynow express checkout");
+        if (!isset($method)) {
+            throw new InvalidArgumentException("The mobile money method should be specified");
         }
 
         $request = $this->formatInitMobile($builder, $phone, $method);
@@ -231,11 +234,10 @@ class Paynow
     private function formatInit(FluentBuilder $builder)
     {
         $items = $builder->toArray();
-
         $items['resulturl'] = $this->resultUrl;
         $items['returnurl'] = $this->returnUrl;
         $items['id'] = $this->integrationId;
-
+		$items['authemail'] = $builder->auth_email;
 
         foreach ($items as $key => $item) {
             $items[$key] = trim(utf8_encode($item));
@@ -327,11 +329,8 @@ class Paynow
     public function processStatusUpdate()
     {
         $data = $_POST;
-
-        if (arr_has($data, 'hash')) {
-            if (!Hash::verify($data, $this->integrationKey)) {
-                throw new HashMismatchException();
-            }
+        if (!arr_has($data, 'hash') || !Hash::verify($data, $this->integrationKey)) {
+            throw new HashMismatchException();
         }
 
         return new StatusResponse($data);

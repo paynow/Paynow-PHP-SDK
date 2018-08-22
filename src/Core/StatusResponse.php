@@ -37,6 +37,21 @@ class StatusResponse
         return arr_has($this->data, 'reference') ? $this->data['reference'] : '';
     }
 
+    public function paynowReference()
+    {
+        return arr_has($this->data, 'paynowreference') ? $this->data['paynowreference'] : '';
+    }
+
+    /**
+     * Get the status of the transaction
+     *
+     * @return mixed|string
+     */
+    public function paid()
+    {
+        return $this->status() === 'paid' ? true : false;
+    }
+
     /**
      * Get the status of the transaction
      *
@@ -44,17 +59,7 @@ class StatusResponse
      */
     public function status()
     {
-        return arr_has($this->data, 'status') ? $this->data['status'] : 'Unavailable';
-    }
-
-    /**
-     * Check if the transaction was paid
-     *
-     * @return bool
-     */
-    public function paid()
-    {
-        return arr_has($this->data, 'status') && strtolower($this->data['status']) === Constants::RESPONSE_PAID;
+        return arr_has($this->data, 'status') ? strtolower($this->data['status']) : 'Unavailable';
     }
 
     /**
