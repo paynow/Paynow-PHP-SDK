@@ -17,6 +17,26 @@ Install the library using composer
 $ composer require paynowzw/php-sdk
 ```
 
+and include the composer autoloader
+
+```php
+<?php
+	require_once 'path/to/vendor/autoload.php';
+
+	// Do stuff
+```
+---
+---
+
+**Or** alternatively, if you do not have composer installed, use the autoloader file included with the library
+
+```php
+<?php
+	require_once 'path/to/library/autoloader.php';
+
+	// Do stuff
+```
+
 # Usage example
 
 Create an instance of the Paynow class optionally setting the result and return url(s)
