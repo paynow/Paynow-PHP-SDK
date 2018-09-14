@@ -19,22 +19,11 @@ before_script:
  
 # Install all project dependencies
 - php composer.phar install
+
  
-services:
-- mysql
- 
-variables:
-  # Configure mysql service (https://hub.docker.com/_/mysql/)
-  MYSQL_DATABASE: hello_world_test
-  MYSQL_ROOT_PASSWORD: mysql
- 
-# We test PHP5.6 (the default) with MySQL
-test:mysql:
-  script:
-  - vendor/bin/phpunit --configuration phpunit_mysql.xml --coverage-text
  
 # We test PHP7 with MySQL, but we allow it to fail
-test:php7:mysql:
+test:php7:
   image: php:7
   script:
   - vendor/bin/phpunit --configuration phpunit_mysql.xml --coverage-text
