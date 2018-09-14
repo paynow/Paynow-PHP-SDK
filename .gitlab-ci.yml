@@ -17,6 +17,8 @@ before_script:
 # Install all project dependencies
 - php composer.phar install
 
+- ls
+
  
  
 # We test PHP7 with MySQL, but we allow it to fail
