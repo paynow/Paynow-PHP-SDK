@@ -26,5 +26,5 @@ before_script:
 test:php7:
   image: php:7
   script:
-  - vendor/bin/phpunit --configuration phpunit_mysql.xml --coverage-text
+  - vendor/bin/phpunit --configuration phpunit.xml --coverage-text
   allow_failure: false
