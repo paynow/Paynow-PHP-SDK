@@ -11,9 +11,6 @@ before_script:
 - apt-get update -yqq
 - apt-get install git -yqq
  
-# Install mysql driver
-- docker-php-ext-install pdo_mysql
- 
 # Install composer
 - curl -sS https://getcomposer.org/installer | php
  
