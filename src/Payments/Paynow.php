@@ -58,27 +58,15 @@ class Paynow
 
     /**
      * @param string|null $ref Transaction reference
-     * @param string|array|null $items
-     * @param string|null $amount
+     * @param string|null $authEmail The email of the person making payment
      *
      * @return FluentBuilder
      */
-    public function createPayment($ref)
-    {
-        return new FluentBuilder($ref);
-    }
-
-    /**
-     * @param string|null $ref Transaction reference
-     * @param string|array|null $items
-     * @param string|null $amount
-     *
-     * @return FluentBuilder
-     */
-    public function createMobilePayment($ref, $authEmail)
+    public function createPayment($ref, $authEmail)
     {
         return new FluentBuilder($ref, $authEmail);
     }
+
 
     /**
      * Send a transaction to Paynow
@@ -211,6 +199,10 @@ class Paynow
         }
 
         $request = $this->formatInitMobile($builder, $phone, $method);
+
+        if(!$builder->auth_email || empty($builder->auth_email) || !filter_var($builder->auth_email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException('Auth email is required for mobile transactions. When creating a mobile payment, please make sure you pass the auth email as the second parameter to the createPayment method');
+        }
 
         $response = $this->client->execute($request);
 

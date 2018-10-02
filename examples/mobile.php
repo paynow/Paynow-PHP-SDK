@@ -3,14 +3,14 @@
 require_once '../autoloader.php';
 
 $paynow = new Paynow\Payments\Paynow(
-    '1238',
-    '043FF361-FAD9-42FC-86CC-3CF451C4B09C',
+    'INTEGRATION_ID',
+    'INTEGRATION_KEY',
     'http://d8403290.ngrok.io/paynow-demo-php/examples/index.php?paynow-return=true',
     'http://d8403290.ngrok.io/paynow-demo-php/examples/callback.php'
 );
 
 
-$payment = $paynow->createMobilePayment('Order 3', 'testmerchant@mailinator.com');
+$payment = $paynow->createPayment('Order 3', 'testmerchant@mailinator.com');
 
 
 $payment->add('Sadza and Cold Water', 0.5)

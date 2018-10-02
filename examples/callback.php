@@ -22,8 +22,8 @@ function dummy_logger($status) {
 }
 
 $paynow = new Paynow\Payments\Paynow(
-    '1240',
-    '7fb5dcea-219c-4797-b3dd-e31c476c2bb5',
+    'INTEGRATION_ID',
+    'INTEGRATION_KEY',
     'http://d8403290.ngrok.io/paynow-demo-php/examples/index.php?paynow-return=true',
     'http://d8403290.ngrok.io/paynow-demo-php/examples/callback.php'
 );

@@ -2,11 +2,12 @@
 
 require_once '../autoloader.php';
 
+
 $paynow = new Paynow\Payments\Paynow(
-    '1240',
-    '7fb5dcea-219c-4797-b3dd-e31c476c2bb5',
-    'http://d8403290.ngrok.io/paynow-demo-php/examples/index.php?paynow-return=true',
-    'http://d8403290.ngrok.io/paynow-demo-php/examples/callback.php'
+    'INTEGRATION_ID',
+    'INTEGRATION_KEY',
+    'http://example.com',
+    'http://example.com'
 );
 
 
@@ -14,12 +15,12 @@ $payment = $paynow->createPayment('Order 3');
 
 
 $payment->add('Sadza and Cold Water', 12.2)
-        ->add('Sadza and Hot Water', 20.50);
+        ->add('Sadza and Hot Water', 20.5);
 
 // Optionally set a description for the order.
 // By default, a description is generated from the items
 // added to a payment
-$payment->setDescription("Mr Maposa\'s lunch order");
+$payment->setDescription("Mr Maposa's lunch order");
 
 
 // Initiate a Payment 
