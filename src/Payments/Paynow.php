@@ -200,7 +200,7 @@ class Paynow
 
         $request = $this->formatInitMobile($builder, $phone, $method);
 
-        if(!$builder->auth_email || empty($builder->auth_email) || !filter_var($builder->auth_email, FILTER_VALIDATE_EMAIL)) {
+        if(!$builder->auth_email || !filter_var($builder->auth_email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException('Auth email is required for mobile transactions. When creating a mobile payment, please make sure you pass the auth email as the second parameter to the createPayment method');
         }
 
