@@ -261,11 +261,12 @@ class Paynow
         $items['method'] = $method;
         $items['authemail'] = $builder->auth_email;
 
+        foreach ($items as $key => $item) {
+            $items[$key] = trim(utf8_encode($item));
+        }
+
         $items['hash'] = Hash::make($items, strtolower($this->integrationKey));
 
-       foreach ($items as $key => $item) {
-            $items[$key] = trim($item);
-        }
 
         return RequestInfo::create(Constants::URL_INITIATE_MOBILE_TRANSACTION, 'POST', $items);
     }
