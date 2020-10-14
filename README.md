@@ -25,10 +25,12 @@ and include the composer autoloader
 
 	// Do stuff
 ```
----
+
 ---
 
-# Or 
+---
+
+# Or
 
 Alternatively, if you do not have composer installed, [first download the library here](https://gitlab.com/paynow-developer-hub/Paynow-PHP-SDK/-/archive/master/Paynow-PHP-SDK-master.zip). And include the autoloader file included with the library
 
@@ -81,8 +83,8 @@ If request was successful, you should consider saving the poll url sent from Pay
 
 ```php
 if($response->success()) {
-    // Redirect the user to Paynow
-    $response->redirect();
+    // Redirect the user to Paynow with optional exit script boolean defaulting to false
+    $response->redirect(true);
 
     // Or if you prefer more control, get the link to redirect the user to, then use it as you see fit
 	$link = $response->redirectLink();
@@ -159,8 +161,8 @@ $response = $paynow->send($payment);
 
 
 if($response->success()) {
-    // Redirect the user to Paynow
-    $response->redirect();
+    // Redirect the user to Paynow with optional exit script boolean defaulting to false
+    $response->redirect(true);
 
     // Or if you prefer more control, get the link to redirect the user to, then use it as you see fit
     $link = $response->redirectLink();

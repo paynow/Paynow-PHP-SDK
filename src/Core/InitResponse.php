@@ -1,4 +1,5 @@
 <?php
+
 namespace Paynow\Core;
 
 use Paynow\Payments\InvalidIntegrationException;
@@ -50,19 +51,19 @@ class InitResponse
      */
     private function load()
     {
-        if(arr_has($this->data,'status')) {
+        if (arr_has($this->data, 'status')) {
             $this->status = strtolower($this->data['status']);
             $this->success = $this->status === Constants::RESPONSE_OK;
         }
-		
-        if(!$this->success()) {
-            if(arr_has($this->data, 'error')) {
+
+        if (!$this->success()) {
+            if (arr_has($this->data, 'error')) {
                 $this->fail(strtolower($this->data['error']));
             }
         }
     }
 
-    public function instructions() 
+    public function instructions()
     {
         return arr_has($this->data, 'instructions') ? $this->data['instructions'] : '';
     }
@@ -88,13 +89,35 @@ class InitResponse
     }
 
     /**
+     * Redirects the user to the url where they can make a payment
+     *
+     * @param bool $exit exit script after redirect
+     * 
+     * @return bool true if headers are not already sent and browser was redirected
+     */
+    public function redirect($exit = false)
+    {
+        $url = $this->redirectUrl();
+
+        if (!headers_sent() && !empty($url)) {
+            header("Location : " . $this->redirectUrl());
+            if ($exit) {
+                exit();
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the url the user should be taken to so they can make a payment
      *
      * @return bool|string
      */
     public function redirectUrl()
     {
-        if(arr_has($this->data,'browserurl')) {
+        if (arr_has($this->data, 'browserurl')) {
             return $this->data['browserurl'];
         }
 
