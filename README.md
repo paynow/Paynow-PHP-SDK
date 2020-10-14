@@ -77,7 +77,7 @@ When you're finally ready to send your payment to Paynow, you can use the `send`
 $response = $paynow->send($payment);
 ```
 
-The response from Paynow will b have some useful information like whether the request was successful or not. If it was, for example, it contains the url to redirect the user so they can make the payment. You can view the full list of data contained in the response in our wiki
+The response from Paynow will have some useful information like whether the request was successful or not. If it was, for example, it contains the url to redirect the user so they can make the payment. You can view the full list of data contained in the response in our wiki
 
 If request was successful, you should consider saving the poll url sent from Paynow in the database
 
