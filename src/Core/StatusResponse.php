@@ -32,11 +32,21 @@ class StatusResponse
         return arr_has($this->data, 'amount') ? $this->data['amount'] : -1;
     }
     
+    /**
+     * Get the reference of the transaction
+     *
+     * @return string
+     */
     public function reference()
     {
         return arr_has($this->data, 'reference') ? $this->data['reference'] : '';
     }
 
+    /**
+     * Get the paynowreference of the transaction
+     *
+     * @return string
+     */
     public function paynowReference()
     {
         return arr_has($this->data, 'paynowreference') ? $this->data['paynowreference'] : '';
@@ -45,7 +55,7 @@ class StatusResponse
     /**
      * Get the status of the transaction
      *
-     * @return mixed|string
+     * @return boolean
      */
     public function paid()
     {
