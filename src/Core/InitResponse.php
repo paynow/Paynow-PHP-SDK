@@ -1,4 +1,5 @@
 <?php
+
 namespace Paynow\Core;
 
 use Paynow\Payments\InvalidIntegrationException;
@@ -50,19 +51,19 @@ class InitResponse
      */
     private function load()
     {
-        if(arr_has($this->data,'status')) {
+        if (arr_has($this->data, 'status')) {
             $this->status = strtolower($this->data['status']);
             $this->success = $this->status === Constants::RESPONSE_OK;
         }
-		
-        if(!$this->success()) {
-            if(arr_has($this->data, 'error')) {
+
+        if (!$this->success()) {
+            if (arr_has($this->data, 'error')) {
                 $this->fail(strtolower($this->data['error']));
             }
         }
     }
 
-    public function instructions() 
+    public function instructions()
     {
         return arr_has($this->data, 'instructions') ? $this->data['instructions'] : '';
     }
@@ -94,7 +95,7 @@ class InitResponse
      */
     public function redirectUrl()
     {
-        if(arr_has($this->data,'browserurl')) {
+        if (arr_has($this->data, 'browserurl')) {
             return $this->data['browserurl'];
         }
 
