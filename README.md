@@ -83,10 +83,8 @@ If request was successful, you should consider saving the poll url sent from Pay
 
 ```php
 if($response->success()) {
-    // Redirect the user to Paynow with optional exit script boolean defaulting to false
-    $response->redirect(true);
 
-    // Or if you prefer more control, get the link to redirect the user to, then use it as you see fit
+    // Get the link to redirect the user to, then use it as you see fit
 	$link = $response->redirectLink();
 
 	// Get the poll url (used to check the status of a transaction). You might want to save this in your DB
