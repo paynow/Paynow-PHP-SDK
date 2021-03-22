@@ -89,28 +89,6 @@ class InitResponse
     }
 
     /**
-     * Redirects the user to the url where they can make a payment
-     *
-     * @param bool $exit exit script after redirect
-     * 
-     * @return bool true if headers are not already sent and browser was redirected
-     */
-    public function redirect($exit = false)
-    {
-        $url = $this->redirectUrl();
-
-        if (!headers_sent() && !empty($url)) {
-            header("Location : " . $this->redirectUrl());
-            if ($exit) {
-                exit();
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Returns the url the user should be taken to so they can make a payment
      *
      * @return bool|string
