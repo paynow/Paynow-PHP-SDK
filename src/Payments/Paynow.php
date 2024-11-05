@@ -232,7 +232,7 @@ class Paynow
 		$items['authemail'] = $builder->auth_email;
 
         foreach ($items as $key => $item) {
-            $items[$key] = trim(utf8_encode($item));
+            $items[$key] = trim(mb_convert_encoding($item, 'UTF-8', 'ISO-8859-1'));
         }
 
         $items['hash'] = Hash::make($items, $this->integrationKey);
@@ -262,7 +262,7 @@ class Paynow
         $items['authemail'] = $builder->auth_email;
 
         foreach ($items as $key => $item) {
-            $items[$key] = trim(utf8_encode($item));
+            $items[$key] = trim(mb_convert_encoding($item, 'UTF-8', 'ISO-8859-1'));
         }
 
         $items['hash'] = Hash::make($items, strtolower($this->integrationKey));
