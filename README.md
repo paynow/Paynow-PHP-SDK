@@ -47,10 +47,10 @@ Create an instance of the Paynow class optionally setting the result and return 
 $paynow = new Paynow\Payments\Paynow(
 	'INTEGRATION_ID',
 	'INTEGRATION_KEY',
-	'http://example.com/gateways/paynow/update',
+		// The return url can be set at later stages. You might want to do this if you want to pass data to the return url (like the reference of the transaction)
+	'http://example.com/return?gateway=paynow' // return url, can be updated later by calling $paynow->getResultUrl($returnUrl)
 
-	// The return url can be set at later stages. You might want to do this if you want to pass data to the return url (like the reference of the transaction)
-	'http://example.com/return?gateway=paynow'
+	'http://example.com/gateways/paynow/update', // result url, can be updated later by calling $paynow->setResultUrl($resultUrl)
 );
 ```
 
@@ -142,10 +142,10 @@ require_once('./paynow/vendor/autoload.php');
 $paynow = new Paynow\Payments\Paynow(
 	'INTEGRATION_ID',
 	'INTEGRATION_KEY',
-	'http://example.com/gateways/paynow/update',
+		// The return url can be set at later stages. You might want to do this if you want to pass data to the return url (like the reference of the transaction)
+	'http://example.com/return?gateway=paynow' // returnUrl
 
-	// The return url can be set at later stages. You might want to do this if you want to pass data to the return url (like the reference of the transaction)
-	'http://example.com/return?gateway=paynow'
+	'http://example.com/gateways/paynow/update', // resultUrl
 );
 
 # $paynow->setResultUrl('');
