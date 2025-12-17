@@ -45,6 +45,10 @@ class Paynow
      * @param Client $client Client for making http requests
      * @param string $id Merchant's integration id
      * @param string $key Merchant's integration key
+     * @param string $returnUrl  The URL on the merchant website the customer will be returned to after the transaction has been processed. 
+     * Please not this cannot be a local url.
+     * @param string $resultUrl  The URL on the merchant website Paynow will post transaction results to. It is recommended this URL contains enough information for the merchant site to identify the transaction.
+
      */
     public function __construct($id, $key, $returnUrl, $resultUrl)
     {
@@ -148,6 +152,8 @@ class Paynow
 
         return $this->initMobile($builder, $phone, $method);
     }
+
+
 
     /**
      * Initiate a new Paynow transaction
@@ -270,7 +276,6 @@ class Paynow
 
         return RequestInfo::create(Constants::URL_INITIATE_MOBILE_TRANSACTION, 'POST', $items);
     }
-
     /**
      * Get the merchant's return url
      * @return string
@@ -347,5 +352,36 @@ class Paynow
     public function setResultUrl($resultUrl)
     {
         $this->resultUrl = $resultUrl;
+    }
+
+    /**
+     * Initiate a remote transaction to paynow.
+     * @param FluentBuilder $builder - The payment object 
+     * @param string $phone - Mobile number used to make payment
+     * @param string $method - Wallet being used to make payment Accepted values: 'ecocash', 'onemoney', 'innbucks'
+     *  @param string $additional - Transaction description
+     *  @param float $total -  The total Order Amount 
+     * @return InitResponse - Response for iniated transaction
+     *
+     * @throws HashMismatchException
+     * @throws NotImplementedException
+     * @throws InvalidIntegrationException
+     * @throws \Paynow\Http\ConnectionException
+     */
+    public function send_remote(FluentBuilder $builder, $phone, $method, $total, $additional = "")
+    {
+        if (is_null($builder->ref)) {
+            throw new EmptyTransactionReferenceException($builder);
+        }
+
+        //Add products to Cart
+
+        $builder->add($additional, $total);
+
+        if ($builder->count == 0) {
+            throw new EmptyCartException($builder);
+        }
+
+        return $this->initMobile($builder, $phone, $method);
     }
 }
