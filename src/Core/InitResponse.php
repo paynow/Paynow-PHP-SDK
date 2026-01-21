@@ -1,6 +1,6 @@
 <?php
 namespace Paynow\Core;
-
+use Paynow\Core\Constants;
 use Paynow\Payments\InvalidIntegrationException;
 
 
@@ -109,5 +109,36 @@ class InitResponse
     public function data()
     {
         return $this->data;
+    }
+
+      /**
+     * Check if  payment method chosen is innbucks
+     * @return bool - 
+     * 
+     */
+    public function is_innbucks(){
+
+       return array_key_exists( "authorizationcode", $this->data);
+
+    }
+    /**
+     * Get  qr code, auth code, expiration time and deep link url when payment method is innbucks
+     * @return array - Associative with the details, return an empty array transaction is not innbucks.
+     * 
+     */
+    public function innbucks_info(){
+        $details  = array();
+
+        if (array_key_exists( "authorizationcode", $this->data))
+        {
+            $details = array(
+                "authorizationcode" => $this->data['authorizationcode'],
+                "url" => Constants::INNBUCKS_DEEPLINK_PREFIX.$this->data['authorizationcode'],
+                "qr_code" => "<img class='paynow_innbuck_qr_code' src='".  Constants::GOOGLE_QR_PREFIX.$this->data['authorizationcode'] . "'/>",
+                "expires_at" => $this->data()['authorizationexpires']
+            );
+        }
+
+        return $details;
     }
 }
