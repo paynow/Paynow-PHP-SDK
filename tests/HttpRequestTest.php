@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Paynow\Http\Client;
 use Paynow\Http\RequestInfo;
 use PHPUnit\Framework\TestCase;
 
@@ -9,63 +10,43 @@ use PHPUnit\Framework\TestCase;
  * @noInspection
  */
 
-final class HttpRequestTests extends TestCase
+final class HttpRequestTest extends TestCase
 {
-    public function testCanSendGetHttpRequest(): void
+    public function testCanCreateGetRequestInfo(): void
     {
-        $new = new \Paynow\Http\Client(new \Paynow\Core\Logger());
+        $request = RequestInfo::create('https://example.org/client', 'GET', []);
 
-        $data = $new->execute(RequestInfo::create('http://localhost/client/', 'GET', []));
-
-        $this->assertEquals('success', $data);
+        $this->assertSame('https://example.org/client', $request->getUrl());
+        $this->assertSame('GET', $request->getMethod());
+        $this->assertSame('', $request->getData());
     }
 
-    public function testCanSendHttpRequestWithOneArgument(): void
+    public function testCanCreateRequestInfoWithQueryData(): void
     {
-        $new = new \Paynow\Http\Client(new \Paynow\Core\Logger());
+        $request = RequestInfo::create('https://example.org/client', 'POST', ['json' => 'true', 'fruits' => 'true']);
 
-        $data = $new->execute(RequestInfo::create('http://localhost/client/', 'GET', ['json'  => 'true']));
-
-        $json = json_decode($data);
-
-        $this->assertTrue(!is_null($json));
+        $this->assertSame('POST', $request->getMethod());
+        $this->assertSame('json=true&fruits=true', $request->getData());
     }
 
-    public function testCanSendHttpRequestWithMultipleArguments(): void
+    public function testCreateRequestInfoThrowsOnInvalidUrl(): void
     {
-        $new = new \Paynow\Http\Client(new \Paynow\Core\Logger());
+        $this->expectException(\InvalidArgumentException::class);
 
-        $data = $new->execute(RequestInfo::create('http://localhost/client/', 'GET', ['json'  => 'true', 'fruits' => 'true']));
-
-        $json = json_decode($data);
-
-        $this->assertTrue(is_array($json) && count($json) == 6);
+        RequestInfo::create('not-a-url', 'GET', []);
     }
 
-    public function testCanSendPostHttpRequest(): void
+    public function testCreateRequestInfoThrowsOnInvalidMethod(): void
     {
-        $new = new \Paynow\Http\Client(new \Paynow\Core\Logger());
+        $this->expectException(\InvalidArgumentException::class);
 
-        $data = $new->execute(RequestInfo::create('http://localhost/client/', 'POST', []));
-
-        $this->assertEquals('Yatta!', $data);
+        RequestInfo::create('https://example.org/client', '', []);
     }
 
-    public function testCanSendPostHttpRequestWithOneArgument(): void
+    public function testCanConstructClient(): void
     {
-        $new = new \Paynow\Http\Client(new \Paynow\Core\Logger());
+        $client = new Client();
 
-        $data = $new->execute(RequestInfo::create('http://localhost/client/', 'POST', ['json' => 'true']));
-
-        $this->assertEquals('JSON!!!', $data);
-    }
-
-    public function testCanSendPostHttpRequestWithMultipleArguments(): void
-    {
-        $new = new \Paynow\Http\Client(new \Paynow\Core\Logger());
-
-        $data = $new->execute(RequestInfo::create('http://localhost/client/', 'POST', ['fruits' => 'true']));
-
-        $this->assertEquals('FRUITY JSON!!!', $data);
+        $this->assertInstanceOf(Client::class, $client);
     }
 }

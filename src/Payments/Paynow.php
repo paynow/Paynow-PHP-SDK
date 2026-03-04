@@ -84,7 +84,7 @@ class Paynow
      */
     public function send($builder)
     {
-        if(is_null($this->returnUrl) || is_null($this->returnUrl)) {
+        if(is_null($this->returnUrl) || is_null($this->resultUrl)) {
             throw new InvalidUrlException();
         }
 
@@ -117,8 +117,9 @@ class Paynow
 
         $description = isset($items['description']) ? $items['description'] : "Payment";
 
-        $builder = new FluentBuilder($description, $items['reference'], $items['amount']);
+        $builder = new FluentBuilder($items['reference']);
         $builder->setDescription($description);
+        $builder->add($description, $items['amount']);
 
         return $builder;
     }
@@ -302,7 +303,7 @@ class Paynow
      */
     public function pollTransaction($url)
     {
-        $response = $this->client->execute(RequestInfo::create(trim($url), 'METHOD', []));
+        $response = $this->client->execute(RequestInfo::create(trim($url), 'POST', []));
 
         if (arr_has($response, 'hash')) {
             if (!Hash::verify($response, $this->integrationKey)) {

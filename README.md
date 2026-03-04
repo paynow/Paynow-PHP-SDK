@@ -81,11 +81,8 @@ If request was successful, you should consider saving the poll url sent from Pay
 
 ```php
 if($response->success()) {
-    // Redirect the user to Paynow
-    $response->redirect();
-
-    // Or if you prefer more control, get the link to redirect the user to, then use it as you see fit
-	$link = $response->redirectLink();
+    // Get the link to redirect the user to, then use it as you see fit
+	$link = $response->redirectUrl();
 
 	// Get the poll url (used to check the status of a transaction). You might want to save this in your DB
 	$pollUrl = $response->pollUrl();
@@ -143,8 +140,7 @@ $paynow = new Paynow\Payments\Paynow(
 	'INTEGRATION_ID',
 	'INTEGRATION_KEY',
 		// The return url can be set at later stages. You might want to do this if you want to pass data to the return url (like the reference of the transaction)
-	'http://example.com/return?gateway=paynow' // returnUrl
-
+	'http://example.com/return?gateway=paynow', // returnUrl
 	'http://example.com/gateways/paynow/update', // resultUrl
 );
 
@@ -159,11 +155,8 @@ $response = $paynow->send($payment);
 
 
 if($response->success()) {
-    // Redirect the user to Paynow
-    $response->redirect();
-
-    // Or if you prefer more control, get the link to redirect the user to, then use it as you see fit
-    $link = $response->redirectLink();
+	// Get the link to redirect the user to, then use it as you see fit
+	$link = $response->redirectUrl();
 
 	$pollUrl = $response->pollUrl();
 

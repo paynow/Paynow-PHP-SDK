@@ -11,14 +11,23 @@ use Paynow\Payments\Paynow;
 
 class FluentBuilderTest extends TestCase
 {
+    private function makePaynow()
+    {
+        return new Paynow(
+            'INTEGRATION_ID',
+            'INTEGRATION_KEY',
+            'https://example.org/return',
+            'https://example.org/result'
+        );
+    }
 
 
     public function testBuilderParseListOfItems()
     {
-        $paynow = new Paynow(new \Paynow\Http\Client(), '', '');
+        $paynow = $this->makePaynow();
 
-
-        $payment = $paynow->createPayment([
+        $payment = $paynow->createPayment('INV-1', 'user@example.org');
+        $payment->add([
             ['title' => 'Candles', 'amount' => 1.5],
             ['title' => 'Sandwich', 'amount' => 2],
             ['title' => 'Bacon', 'amount' => 4],
@@ -29,10 +38,10 @@ class FluentBuilderTest extends TestCase
 
     public function testBuilderCanComputeTotalOfItems()
     {
-        $paynow = new Paynow(new \Paynow\Http\Client(), '', '');
+        $paynow = $this->makePaynow();
 
-
-        $payment = $paynow->createPayment([
+        $payment = $paynow->createPayment('INV-2', 'user@example.org');
+        $payment->add([
             ['title' => 'Candles', 'amount' => 1.5],
             ['title' => 'Sandwich', 'amount' => 2],
             ['title' => 'Bacon', 'amount' => 4],
@@ -43,10 +52,10 @@ class FluentBuilderTest extends TestCase
 
     public function testBuilderCanAddItemsFluentsAfterInit()
     {
-        $paynow = new Paynow(new \Paynow\Http\Client(), '', '');
+        $paynow = $this->makePaynow();
 
-
-        $payment = $paynow->createPayment([
+        $payment = $paynow->createPayment('INV-3', 'user@example.org');
+        $payment->add([
             ['title' => 'Candles', 'amount' => 1.5],
             ['title' => 'Sandwich', 'amount' => 2],
             ['title' => 'Bacon', 'amount' => 4],
@@ -62,10 +71,9 @@ class FluentBuilderTest extends TestCase
 
     public function testBuilderCanAddItemsFluently()
     {
-        $paynow = new Paynow(new \Paynow\Http\Client(), '', '');
+        $paynow = $this->makePaynow();
 
-
-        $payment = $paynow->createPayment();
+        $payment = $paynow->createPayment('INV-4', 'user@example.org');
 
         $payment
             ->add('Green Beans', 3)
